@@ -1,0 +1,53 @@
+#ZEND step by step
+
+### install the skeleton-application (needs a githuub token)
+php composer.phar create-project --stability="dev" zendframework/skeleton-application path/to/install
+
+###change the /pulic/.htaccess add this line on top of it to test whether the .htaccess gets used
+deny from all
+
+### create a new virtual host
+sudo touch /etc/apache2/sites-available/zend-example.dev.conf
+
+### and change it to this content
+<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+	ServerName zend-example.dev
+	ServerAlias www.zend-example.dev
+	DocumentRoot /var/www/html/zend-example/public
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+	<Directory /var/www/html/zend-example/public>
+		DirectoryIndex index.php
+		AllowOverride All
+		Order allow,deny
+		Allow from all
+	</Directory>
+</VirtualHost>
+
+### host aktivieren und APACHE neu starten
+sudo a2ensite zend-example.dev.conf
+sudo service apache2 reload
+
+###nun muss dieser host noch in /etc/hosts eingetragen werden
+sudo gedit /etc/hosts
+### das eintragen
+### 192.168.210.181 zend-example.dev www.zend-example.dev
+### und das netzwerk neu starten
+sudo service networking restart
+### nun sollte man beide Hosts pingen können
+ping www.zend-example.dev
+ping zend-example.dev
+
+###ein Aufruf im Browser (http://zend-example.dev) führt nun zu 
+#Forbidden
+#You don't have permission to access / on this server.
+#Apache/2.4.10 (Ubuntu) Server at zend-example.dev Port 80
+### denn wir haben mit deny die ausführung verboten
+
+### nun nehmen wir das deny wieder aus der datei /pulic/.htaccess  heraus
+### und schon sehen wir die ZEND Beispiel-Anwendung...
+
+
+
+
